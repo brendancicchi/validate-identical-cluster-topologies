@@ -1,5 +1,6 @@
 import cassandra_utils
 import click
+from tabulate import tabulate
 
 # Starting code derived from https://stackoverflow.com/a/44349292/10156762
 # Have some options that require other optional arguments to be set
@@ -77,11 +78,17 @@ def validate_identical_topology(
     target_topology = target_session.topology_hashes()
 
     if source_topology['hashes']['cluster'] == target_topology['hashes']['cluster']:
-        click.echo('These two cluster topologies are the same')
+        click.echo('These two cluster topologies are the same\n')
     else:
-        msg = 'These two cluster topologies are different'
-        if verbose:
-            msg = f'{msg}\n\nSource Topology:\n{source_topology}\n\nTarget Topology:\n{target_topology}'
-        else:
-            msg = f'{msg} (Run with -v for the full topologies)'
-        click.echo(msg)
+        click.echo('These two cluster topologies are different\n')
+    matched_dcs = []
+    for source_hash, source_dc in source_topology['hashes']['datacenters']:
+        matched_dcs.extend([ [source_dc, '==', target_dc] for target_hash, target_dc in target_topology['hashes']['datacenters'] if source_hash == target_hash])
+    if len(matched_dcs) > 0:
+        click.echo(tabulate([['Source DataCenter', '', 'Target DataCenter']] + matched_dcs, headers="firstrow"))
+    else:
+        click.echo('No datacenters have a corresponding topology match')
+    if verbose:
+        click.echo(f'\n\nSource Topology:\n{source_topology}\n\nTarget Topology:\n{target_topology}')
+    else:
+        click.echo('\n\nNote: Run with -v to print the full topologies')
