@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name='Validate Identical Cluster Topology',
-    version='0.1',
+    version='0.2',
     py_modules=['clone-topo-check'],
     install_requires=[
         'click==7.1.2',
@@ -10,6 +10,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        clone_topo_check=main:validate_identical_topology
+        cass_compare_topology=main:validate_identical_topology
     ''',
 )
