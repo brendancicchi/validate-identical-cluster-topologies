@@ -37,7 +37,7 @@ class MutuallyExclusive(click.Option):
         assert self.mutually_exclusive, "'mutually_exclusive' parameter required"
         kwargs['help'] = (kwargs.get('help', '') +
           ' NOTE: This argument cannot be used with %s' %
-          ','.join(self.mutually_exclusive)
+          self.mutually_exclusive
         ).strip()
         super(MutuallyExclusive, self).__init__(*args, **kwargs)
     
